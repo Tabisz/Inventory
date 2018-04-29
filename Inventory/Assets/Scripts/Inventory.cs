@@ -35,13 +35,34 @@ public class Inventory : MonoBehaviour {
     private void CreateLayout()
     {
         allSlots = new List<GameObject>();
-        inventoryWidth = (slots / rows) * (slotSize + slotPaddingLeft) + slotPaddingLeft;
+        int columns = slots / rows;
+        inventoryWidth = (columns) * (slotSize + slotPaddingLeft) + slotPaddingLeft;
         inventoryHeight = rows * (slotSize + slotPaddingTop) + slotPaddingTop;
 
         inventoryRect = GetComponent<RectTransform>();
 
         inventoryRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,inventoryWidth);
         inventoryRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, inventoryHeight);
+
+        
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < columns; x++)
+            {
+                GameObject newSlot = (GameObject)Instantiate(slotPrefab);
+
+                RectTransform slotRect = newSlot.GetComponent<RectTransform>();
+                newSlot.name = "Slot";
+                newSlot.transform.SetParent(this.transform.parent);
+
+                slotRect.localPosition = inventoryRect.localPosition + new Vector3(slotPaddingLeft * (x + 1) + (slotSize * x), -slotPaddingTop * (y + 1) - (slotSize * y));
+
+                slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, slotSize);
+                slotRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, slotSize);
+
+                allSlots.Add(newSlot);
+            }
+        }
     }
 }
 
